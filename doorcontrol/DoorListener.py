@@ -15,7 +15,7 @@ from smartcard.CardMonitoring import CardMonitor, CardObserver
 
 class DoorListener( CardObserver ):
 
-    def __init__ (self,ldap _connector, config_path, logger):
+    def __init__ (self,ldap_connector, config_path, logger):
         """
         Initializes the door_listener
         As parameters, it needs the ldap connector to the
@@ -28,13 +28,13 @@ class DoorListener( CardObserver ):
         
         #Select the card port
         if (config['parallel']['use'] == true):
-            import parallel/door
+            from  parallel import door
             self.door_handler = Door(config['parallel'], self.logger)
-        else if (config['serial']['use'] == true):
-            import serial/door
+        elif (config['serial']['use'] == true):
+            from serial import door
             self.door_handler = Door(config['serial'], self.logger)
-        else if (config['raspberry']['use'] == true):
-            import raspberry/door
+        elif (config['raspberry']['use'] == true):
+            from raspberry import door
             self.door_handler = Door(config['raspberry'], self.logger)
         else:
             logger.error("cannot recognize configuration")

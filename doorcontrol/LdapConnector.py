@@ -3,7 +3,7 @@
 import ldap
 import yaml
 
-import logger
+import logging
 
 
 class LdapConnector:
@@ -56,7 +56,7 @@ class LdapConnector:
             # Si no conozco la version del ldap, utilizo 2 por defecto
             if (self.config['version'] == 3):
                 l.protocol_version = ldap.VERSION3	
-            else if (self.config['version'] == 2 ):
+            elif (self.config['version'] == 2 ):
                 l.protocol_version = ldap.VERSION2
             else:
                 # I don't support this version of ldap.
