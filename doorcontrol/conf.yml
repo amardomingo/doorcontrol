@@ -1,0 +1,45 @@
+# Config for the ldap
+ldap:
+
+    ## MANDATORY FIELDS ##
+    # The ldap server
+    server: localhost
+    
+    # The search to authenticate
+    baseDN: ou=users,dc=example,dc=org
+    
+    # The name the dni is stored in the ldap
+    dni_name: employeeNumber, sn
+
+    ## OPTIONAL FIELDS ##
+    # User and pass for the ldap
+    user: cn=admin,dc=example,dc=org
+    password: pass
+    
+    # The ldap Version
+    version: 3
+
+# Config options for the parallel port
+parallel:
+
+    use: false
+
+    # The pin number to open the door
+    pin: 1
+
+# Config options for the serial port
+serial:
+    
+    use: false
+    
+    port: 1
+    
+    # No need to set pin number here, see the README for details
+    
+# Config for the Raspberry GPIO port
+raspberry:
+    
+    use: false
+    
+    # The GPIO pin number to use
+    pin: 12

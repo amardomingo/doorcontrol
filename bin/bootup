@@ -1,0 +1,83 @@
+#! /bin/sh
+# Copyright (c) 2013 Alberto Mardomingo
+# All rights reserved.
+#
+# Author: Alberto Mardomingo, 2013
+#
+# /etc/init.d/doorcontrol
+#   and its symbolic link
+# /usr/sbin/doorcontrol
+#
+### BEGIN INIT INFO
+# Provides:          doorcontrol
+# Required-Start:    $network
+# Required-Stop:
+# Default-Start:     3 5
+# Default-Stop:      0 1 2 6
+# Short-Description: doorcontrol daemon, providing control to the lab door
+# Description:       doorocontrol controls the lab door, giving access when an
+#                    an authorized DNI is introduced in the reader
+### END INIT INFO
+# Some things that run always
+touch /var/lock/doorcontrol
+
+DOOR_BIN=/opt/doorcontrol/bin/main_door
+test -x $DOOR_BIN || { echo "$DOOR_BIN not installed";
+        if [ "$1" = "stop" ]; then exit 0;
+        else exit 5; fi; }
+
+# Check for existence of needed config file and read it
+DOOR_CONFIG=/opt/doorcontrol/doorcontrol/conf.yml
+test -r $DOOR_CONFIG || { echo "$DOOR_CONFIG not existing";
+        if [ "$1" = "stop" ]; then exit 0;
+        else exit 6; fi; }
+
+# Load the rc.status script for this service.
+. /etc/rc.status
+
+# Reset status of this service
+rc_reset
+
+# Carry out specific functions when asked to by the system
+case "$1" in
+  start)
+    echo -n "Starting puerta... "
+    #/root/puerta/startup.sh
+    starproc $PUERTA_BIN
+    rc_status -v 
+    echo "done!"
+    ;;
+  stop)
+    echo -n "Stopping puerta... "
+    #killall screen
+    #killall main.py
+    killproc -TERM $PUERTA_BIN
+    rc_status -v
+    echo "done!"
+    ;;
+    status)
+        echo -n "Checking for service bar "
+        ## Check status with checkproc(8), if process is running
+        ## checkproc will return with exit status 0.
+
+        # Return value is slightly different for the status command:
+        # 0 - service up and running
+        # 1 - service dead, but /var/run/  pid  file exists
+        # 2 - service dead, but /var/lock/ lock file exists
+        # 3 - service not running (unused)
+        # 4 - service status unknown :-(
+        # 5--199 reserved (5--99 LSB, 100--149 distro, 150--199 appl.)
+
+        # NOTE: checkproc returns LSB compliant status values.
+        checkproc $PUERTA_BIN
+        # NOTE: rc_status knows that we called this init script with
+        # "status" option and adapts its messages accordingly.
+        rc_status -v
+        ;;
+  *)
+    echo "Usage: /etc/init.d/puerta {start|stop|status}"
+    exit 1
+    ;;
+esac
+
+rc_exit

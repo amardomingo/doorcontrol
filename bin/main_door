@@ -1,0 +1,46 @@
+#!/usr/bin/python -tt
+# -*- coding: UTF-8 -*-
+
+import sys
+
+import ../doorcontrol/DoorListener
+import ../doorcontrol/LdapConnector
+import logging
+
+from smartcard.System import readers
+from smartcard.CardMonitoring import CardMonitor, CardObserver
+from smartcard.util import *
+
+
+def main():
+
+    # config file
+    config_path = '../doorcontrol/conf.yml'
+    
+    # Create the logger
+    logger = logging.getLogger('DoorControl')
+    handler = logging.FileHandler('../log/door.log')
+    formatter = logging.Formatter('[ %(asctime)s ]  %(levelname)s : %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler) 
+    logger.setLevel(logging.INFO)
+    
+    try:
+        cardmonitor = CardMonitor()
+        
+        # The ldap connector
+        ldap = LdapConnector(config_path, logger)
+        
+        # The door listener
+        cardobserver = DoorListener(config_path, logger)
+        
+        
+        cardmonitor.addObserver(cardobserver)
+    except e:
+        logger.error("Could not initialize smartCardReader")
+        logger.error(e)
+        sys.exit(e)
+
+if __name__ == '__main__':
+    main()
+
