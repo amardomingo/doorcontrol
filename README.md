@@ -2,7 +2,7 @@ DoorControl
 ====================
 Small phython utility to control a door using a smartcard reader
 
-*** WARNING: This is development level software.  Please do not use it unless you
+***WARNING: This is development level software.  Please do not use it unless you
              are familiar with what that means and are comfortable using that type
              of software. Also, be advised: it has not been tested yet, and the 
              parallel and serial options will probably never be. IT MAY NOT WORK
