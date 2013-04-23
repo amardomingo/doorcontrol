@@ -1,10 +1,17 @@
 #!/usr/bin/python -tt
 # -*- coding: UTF-8 -*-
 
-import sys
+import sys, os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'parallel/'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'serial'))
+sys.path.append(os.path.join(os.path.dirname(__file__), './raspberry'))
+
 import string
 import time
 import logging
+import yaml
+import re
 
 import LdapConnector
 
@@ -23,19 +30,22 @@ class DoorListener( CardObserver ):
         file with the parameters for the port, and a logger
         """
         self.ldap = ldap_connector
-        self.config = load_config(config_path)
+        self.config = self.load_config(config_path)
         self.logger = logger
+
         
         #Select the card port
-        if (config['parallel']['use'] == true):
-            from  parallel import door
-            self.door_handler = Door(config['parallel'], self.logger)
-        elif (config['serial']['use'] == true):
-            from serial import door
-            self.door_handler = Door(config['serial'], self.logger)
-        elif (config['raspberry']['use'] == true):
-            from raspberry import door
-            self.door_handler = Door(config['raspberry'], self.logger)
+        if (self.config['parallel']['use']):
+            import door.parallel as Door
+            self.door_handler = Door.Door(self.config['parallel'], self.logger)
+        elif (self.config['serial']['use']):
+            import door.serial as  Door
+            self.door_handler = Door.Door(self.config['serial'], self.logger)
+        elif (self.config['raspberry']['use']):
+            print 'importing raspberry'
+            import door.raspberry as Door
+            print 'imported'
+            self.door_handler = Door.Door(self.config['raspberry'], self.logger)
         else:
             logger.error("cannot recognize configuration")
             sys.exit()
@@ -56,7 +66,7 @@ class DoorListener( CardObserver ):
             dni = lector[0]
             name = lector[1]
 
-            self.logger.info("%s has inserted the DNI %s " % nombre, dni)
+            self.logger.info(name + " has inserted the DNI " + dni)
     
             if(len(dni) != 0 and self.ldap.search(dni)):
                 self.door_handler.open_door()
@@ -64,14 +74,14 @@ class DoorListener( CardObserver ):
             else:
                 self.logger.info("Access denied")
     
-    def load_config(config_file_path):
+    def load_config(self, config_file_path):
         """
         Carga la configuracion del ldap, en la ruta que se le indica
         """
         return yaml.load(file(config_file_path, 'r'))
     
     
-    def read_card(reader):
+    def read_card(self, reader):
         """
         Read the data from the reader given as a parameters
         It actually takes an array of readers, but only access the first one

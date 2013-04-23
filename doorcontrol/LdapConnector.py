@@ -13,14 +13,14 @@ class LdapConnector:
         Initializes the ldap connector, with the config file path
         and a logger passed as parameters
         """
-        self.config = load_config(config)
+        self.config = self.load_config(config)
         #By default, sets the ldap version to 3
         if not self.config.get('version'):
             self.config['version'] = 3
         self.logger = logger
 
 
-    def load_config(config):
+    def load_config(self,config):
         """
         Carga la configuracion del ldap, en la ruta que se le indica
         """
@@ -30,7 +30,7 @@ class LdapConnector:
         
         return ldap_config
 
-    def search(dni):
+    def search(self,dni):
         """
         Returns true if the given dni id found in the ldap
         """
@@ -70,11 +70,11 @@ class LdapConnector:
             result_set = []
             l.simple_bind(self.config['user'],self.config['password'])
             for filt in  self.config['dni_name'].split(', '):
-                ldap_result_id = l.search(elf.config['baseDN'], ldap.SCOPE_SUBTREE, filt + '=' + dni, None)
+                ldap_result_id = l.search(self.config['baseDN'], ldap.SCOPE_SUBTREE, filt + '=' + dni, None)
             
                 result_type, result_data = l.result(ldap_result_id, 0)
-                print result_type
-                print result_data
+                #print result_type
+                #print result_data
             
                 
                 while result_data != []:
@@ -88,6 +88,7 @@ class LdapConnector:
             # I don't need to return the name nor the dni, I already knwe both!
             return result_set != []
 	    
-        except e:
+        except Exception as e:
+            #print e
             self.logger.error(e)
             # handle error however you like

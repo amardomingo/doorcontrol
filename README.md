@@ -2,7 +2,7 @@ DoorControl
 ====================
 Small phython utility to control a door using a smartcard reader
 
-***WARNING: This is development level software.  Please do not use it unless you
+*** WARNING: This is development level software.  Please do not use it unless you
              are familiar with what that means and are comfortable using that type
              of software. Also, be advised: it has not been tested yet, and the 
              parallel and serial options will probably never be. IT MAY NOT WORK
@@ -19,7 +19,7 @@ Installation & Configuration
   
   In a Debian based system, you can easily install them through aptitude_:
         
-      aptitude install python-ldap python-yaml python-pyscard
+      aptitude install python-ldap python-yaml python-pyscard python-dev
 
   Also, depending on wich port you want to use, you will want to install different
   libraries:
@@ -48,17 +48,27 @@ Installation & Configuration
     
   Remember to change '0.5.2a' for the version number corresponding to the one you
   download.
-       
+  
+  Alternatively, you can install the version avaliable through the raspberry 
+  repositories, python-rpi.gpio.
+  
+    aptitude install python-rpi.gpio    
+  
+         
 ### Configuration
 
   Once you have decided wich port to use, you need to edit the configuration file
   in the doorcontrol/conf.yml file, as well as the ldap connection data.
   
-  
-  
 ### Run on startup
 
-  An example init script can be found at bin/bootup
+  If you want it run as a daemon, on startup, you should edit the bin/bootup file,
+  and change the "DAEMON=/opt/doorcontrol/bin/$NAME" to point to the place you have
+  downloaded it. Then, copy it to /etc/init.d/, rename it and register it:
+    
+    cp bin/bootup /etc/init.d/doorcontrol
+    insserv doorcontrol
+    update-rc.d doorcontrol defaults
   
 
 Contributing
@@ -103,3 +113,4 @@ Redistribution and use in source and binary forms, with or without modification,
   - Neither the name of the organization nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+

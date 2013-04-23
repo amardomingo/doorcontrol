@@ -12,35 +12,51 @@ from smartcard.System import readers
 from smartcard.CardMonitoring import CardMonitor, CardObserver
 from smartcard.util import *
 
+from time import sleep
+
 
 def main():
 
     # config file
-    config_path = '../doorcontrol/conf.yml'
+    config_path = os.path.join(os.path.dirname(__file__), '../doorcontrol/conf.yml')
     
     # Create the logger
     logger = logging.getLogger('DoorControl')
-    handler = logging.FileHandler('../log/door.log')
+    log_path = os.path.join(os.path.dirname(__file__), '../log/')
+    
+    # If the path to the log file doesn't exists, create it
+    if not os.path.exists(log_path):
+      os.makedirs(log_path)
+    handler = logging.FileHandler(log_path + "door.log")
+    
+    # Nice simple format for the logger
     formatter = logging.Formatter('[ %(asctime)s ]  %(levelname)s : %(message)s')
     handler.setFormatter(formatter)
+    
+    # Finish setting the log handler
     logger.addHandler(handler) 
     logger.setLevel(logging.INFO)
     
     try:
         cardmonitor = CardMonitor()
-        
+
         # The ldap connector
-        ldap = LdapConnector(config_path, logger)
+        ldap = LdapConnector.LdapConnector(config_path, logger)
         
         # The door listener
-        cardobserver = DoorListener(config_path, logger)
+        cardobserver = DoorListener.DoorListener(ldap, config_path, logger)
         
-        
+        # Adds the observers
         cardmonitor.addObserver(cardobserver)
-    except e:
+        
+        while 1:
+            # Need to keep the program awake, otherwise
+            # it will end
+            sleep(5)
+    except Exception as e:
         logger.error("Could not initialize smartCardReader")
         logger.error(e)
-        sys.exit(e)
+        sys.exit()
 
 if __name__ == '__main__':
     main()

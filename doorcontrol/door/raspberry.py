@@ -25,13 +25,13 @@ class Door:
     self.logger = logger
 
 
-  def open_door():
+  def open_door(self):
     """
     Opens the door using the gpio port
     """
     
     # The gpio pin to use
-    pin = int(self.config["port"])
+    pin = int(self.config["pin"])
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(pin, GPIO.OUT)
 
