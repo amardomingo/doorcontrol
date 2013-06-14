@@ -52,13 +52,21 @@ Installation & Configuration
   Alternatively, you can install the version avaliable through the raspberry 
   repositories, python-rpi.gpio.
   
-    aptitude install python-rpi.gpio    
+    aptitude install python-rpi.gpio
   
          
 ### Configuration
 
-  Once you have decided wich port to use, you need to edit the configuration file
-  in the doorcontrol/conf.yml file, as well as the ldap connection data.
+  Once you have decided wich port to use, you need to generate and edit the 
+  configuration file:
+    
+    cd doorcontrol
+    python mkconf.py
+
+  If a conf.yml file already exists, it will ask you to overwrite it.
+  
+  Once you have a conf.yml in the doorcontrol/ folder, edit it and add both the
+  port and ldap configuration.
   
 ### Run on startup
 
