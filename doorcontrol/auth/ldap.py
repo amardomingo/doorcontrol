@@ -6,29 +6,18 @@ import yaml
 import logging
 
 
-class LdapConnector:
+class AuthConnector:
 
     def __init__ (self,config, logger):
         """
         Initializes the ldap connector, with the config file path
         and a logger passed as parameters
         """
-        self.config = self.load_config(config)
+        self.config = config
         #By default, sets the ldap version to 3
         if not self.config.get('version'):
             self.config['version'] = 3
         self.logger = logger
-
-
-    def load_config(self,config):
-        """
-        Carga la configuracion del ldap, en la ruta que se le indica
-        """
-        file_config = file(config, 'r')
-        
-        ldap_config = yaml.load(file_config).get('ldap')
-        
-        return ldap_config
 
     def search(self,dni):
         """

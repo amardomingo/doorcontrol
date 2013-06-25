@@ -1,6 +1,7 @@
 # Config for the ldap
 ldap:
-
+    
+    use: false
     ## MANDATORY FIELDS ##
     # The ldap server
     server: localhost
@@ -16,9 +17,21 @@ ldap:
     user: cn=admin,dc=example,dc=org
     password: pass
     
-    # The ldap Version
+    # The ldap VersionVersion
     version: 3
 
+# Config for the file
+file:
+    use: false
+    
+    # URI, either local or url.
+    # The recomended structure is ['Name',DNI]
+    uri: uri/to/csv
+    
+    # CSV data, optional
+    delimiter: ','
+    quotechar: '|'
+    
 # Config options for the parallel port
 parallel:
 

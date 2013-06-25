@@ -15,31 +15,34 @@ Installation & Configuration
 ### Dependencies:
 
   To run this utility, there are several python libraries required, independently
-  of the connection you want to use. These are python-ldap, pyyaml and pyscard
+  of the connection you want to use. These are pyyaml and pyscard
   
-  In a Debian based system, you can easily install them through aptitude_:
+  In a Debian based system, you can easily install them through aptitude:
         
-      aptitude install python-ldap python-yaml python-pyscard python-dev
+      aptitude install python-yaml python-pyscard python-dev
+
+
+#### Port dependencies:
 
   Also, depending on wich port you want to use, you will want to install different
   libraries:
   
-#### Parallel port
+##### Parallel port
      
-  The pyparallel library is needed, avaliable through the python-parallel package
+  The pyparallel library is needed, available through the python-parallel package
   in Debian:
   
     aptitude install python-parallel
            
-#### Serial port
+##### Serial port
   
   In this case, you will need pyserial. In Debian:
   
     aptitude install python-pyserial
   
-#### Raspberry pi GPIO
+##### Raspberry pi GPIO
      
-  You need to install the rpi.gpio avaliable at https://pypi.python.org/pypi/RPi.GPIO
+  You need to install the rpi.gpio available at https://pypi.python.org/pypi/RPi.GPIO
   To install it, download the package and run:
   
     tar zxf RPi.GPIO-0.5.2a.tar.gz
@@ -49,16 +52,32 @@ Installation & Configuration
   Remember to change '0.5.2a' for the version number corresponding to the one you
   download.
   
-  Alternatively, you can install the version avaliable through the raspberry 
+  Alternatively, you can install the version available through the raspberry 
   repositories, python-rpi.gpio.
   
-    aptitude install python-rpi.gpio    
+    aptitude install python-rpi.gpio
   
+#### Auth-system dependencies:
+  
+  You can use either ldap authentication, or a csv file with a list of names a DNIs
+  on it. Each of them have different requirements:
+  
+##### LDAP Authentication
+
+  In this case, you will need to install the python ldap module. In debian-like:
+  
+    aptitude install python-ldap
+    
+##### File Authentication
+
+  The only needed module here is the python csv lib, which already comes with most
+  of the python installations.
          
 ### Configuration
 
   Once you have decided wich port to use, you need to edit the configuration file
-  in the doorcontrol/conf.yml file, as well as the ldap connection data.
+  in the doorcontrol/conf.yml file, as well as the ldap connection data, or the
+  URI to the csv file.
   
 ### Run on startup
 
