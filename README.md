@@ -2,7 +2,7 @@ DoorControl
 ====================
 Small phython utility to control a door using a smartcard reader
 
-*** WARNING: This is development level software.  Please do not use it unless you
+***WARNING: This is development level software.  Please do not use it unless you
              are familiar with what that means and are comfortable using that type
              of software. Also, be advised: it has not been tested yet, and the 
              parallel and serial options will probably never be. IT MAY NOT WORK
@@ -56,7 +56,7 @@ Installation & Configuration
   repositories, python-rpi.gpio.
   
     aptitude install python-rpi.gpio
-  
+
 #### Auth-system dependencies:
   
   You can use either ldap authentication, or a csv file with a list of names a DNIs
@@ -75,9 +75,16 @@ Installation & Configuration
          
 ### Configuration
 
-  Once you have decided wich port to use, you need to edit the configuration file
-  in the doorcontrol/conf.yml file, as well as the ldap connection data, or the
-  URI to the csv file.
+  Once you have decided wich port to use and the auth system, you need to generate
+  and edit the configuration file:
+    
+    cd doorcontrol
+    python mkconf.py
+
+  If a conf.yml file already exists, it will ask you to overwrite it.
+  
+  Once you have a conf.yml in the doorcontrol/ folder, edit it and add both the
+  port and ldap configuration.
   
 ### Run on startup
 
