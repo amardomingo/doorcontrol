@@ -38,7 +38,7 @@ Installation & Configuration
   
   In this case, you will need pyserial. In Debian:
   
-    aptitude install python-pyserial
+    aptitude install python-serial
   
 ##### Raspberry pi GPIO
      
