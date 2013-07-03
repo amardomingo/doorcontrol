@@ -13,7 +13,7 @@ import logging
 import yaml
 import re
 
-import LdapConnector
+import AuthConnector
 
 from smartcard.System import readers
 from smartcard.util import toHexString
@@ -22,14 +22,13 @@ from smartcard.CardMonitoring import CardMonitor, CardObserver
 
 class DoorListener( CardObserver ):
 
-    def __init__ (self,ldap_connector, config_path, logger):
+    def __init__ (self,auth_connector, config_path, logger):
         """
         Initializes the door_listener
-        As parameters, it needs the ldap connector to the
-        ldap where the user data is stored, the path to the config
+        As parameters, it needs the auth connector, the path to the config
         file with the parameters for the port, and a logger
         """
-        self.ldap = ldap_connector
+        self.auth = auth_connector
         self.config = self.load_config(config_path)
         self.logger = logger
 
@@ -68,7 +67,7 @@ class DoorListener( CardObserver ):
 
             self.logger.info(name + " has inserted the DNI " + dni)
     
-            if(len(dni) != 0 and self.ldap.search(dni)):
+            if(len(dni) != 0 and self.auth.search(dni)):
                 self.door_handler.open_door()
                 self.logger.info("Access granted")
             else:
@@ -76,7 +75,7 @@ class DoorListener( CardObserver ):
     
     def load_config(self, config_file_path):
         """
-        Carga la configuracion del ldap, en la ruta que se le indica
+        Carga la configuracion, en la ruta que se le indica
         """
         return yaml.load(file(config_file_path, 'r'))
     
