@@ -129,6 +129,7 @@ Contributors
 License
 -------
 DoorControl is a small python utilty to control a door with a card reader
+
 Copyright (c) 2013, Alberto Mardomingo
 
 This program is free software; you can redistribute it and/or
