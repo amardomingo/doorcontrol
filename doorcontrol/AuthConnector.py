@@ -20,7 +20,7 @@ class AuthConnector:
             import auth.file as FileConnector
             self.auth_connector = FileConnector.AuthConnector(self.config['file'], self.logger)
         elif (self.config['ldap']['use']):
-            import auth.ldap as  LdapConnector
+            import auth.ldapconnect as  LdapConnector
             self.auth_connector = LdapConnector.AuthConnector(self.config['ldap'], self.logger)
         else:
             self.logger.error("cannot recognize auth configuration")

@@ -15,11 +15,12 @@ Installation & Configuration
 ### Dependencies:
 
   To run this utility, there are several python libraries required, independently
-  of the connection you want to use. These are pyyaml and pyscard
+  of the connection you want to use. These are pyyaml and pyscard. Depending on
+  your system, you may also need to install the smartcard libraries
   
   In a Debian based system, you can easily install them through aptitude:
         
-      aptitude install python-yaml python-pyscard python-dev
+      aptitude install python-yaml python-pyscard python-dev pcscd
 
 
 #### Port dependencies:
@@ -93,6 +94,7 @@ Installation & Configuration
   downloaded it. Then, copy it to /etc/init.d/, rename it and register it:
     
     cp bin/bootup /etc/init.d/doorcontrol
+    chmod +x /etc/init.d/doorcontrol
     insserv doorcontrol
     update-rc.d doorcontrol defaults
   
