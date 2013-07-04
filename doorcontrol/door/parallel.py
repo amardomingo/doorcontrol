@@ -21,7 +21,7 @@ class Door:
         self.config = config
         self.logger = logger
     
-    def open_door():
+    def open_door(self):
         """
         Opens the door
         No big deal, just opens it with the parallel port

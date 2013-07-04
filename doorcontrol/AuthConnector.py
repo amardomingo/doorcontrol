@@ -5,7 +5,7 @@ import yaml
 import logging
 
 
-class LdapConnector:
+class AuthConnector:
 
     def __init__ (self,config, logger):
         """
@@ -13,16 +13,17 @@ class LdapConnector:
         and a logger passed as parameters
         """
         self.config = self.load_config(config)
+        self.logger = logger
         
          #Select the card port
         if (self.config['file']['use']):
-            import auth.file as AuthConnector
-            self.auth_connector = AuthConnector.AuthConnector(self.config['file'], self.logger)
+            import auth.file as FileConnector
+            self.auth_connector = FileConnector.AuthConnector(self.config['file'], self.logger)
         elif (self.config['ldap']['use']):
-            import auth.ldap as  Door
-            self.auth_connector = AuthConnector.AuthConnector(self.config['ldap'], self.logger)
+            import auth.ldap as  LdapConnector
+            self.auth_connector = LdapConnector.AuthConnector(self.config['ldap'], self.logger)
         else:
-            logger.error("cannot recognize auth configuration")
+            self.logger.error("cannot recognize auth configuration")
             sys.exit()
 
 
@@ -37,9 +38,9 @@ class LdapConnector:
         return ldap_config
 
     def search(self,dni):
-        return self.auth_connector.search(dni)
+        try:
+            return self.auth_connector.search(dni)
 	    
         except Exception as e:
-            #print e
+            self.logger.error("Error searching the dni")
             self.logger.error(e)
-            # handle error however you like

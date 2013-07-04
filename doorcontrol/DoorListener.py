@@ -3,9 +3,9 @@
 
 import sys, os
 
-sys.path.append(os.path.join(os.path.dirname(__file__), 'parallel/'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'serial'))
-sys.path.append(os.path.join(os.path.dirname(__file__), './raspberry'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'door'))
+#sys.path.append(os.path.join(os.path.dirname(__file__), 'serial'))
+#sys.path.append(os.path.join(os.path.dirname(__file__), './raspberry'))
 
 import string
 import time
@@ -28,6 +28,7 @@ class DoorListener( CardObserver ):
         As parameters, it needs the auth connector, the path to the config
         file with the parameters for the port, and a logger
         """
+
         self.auth = auth_connector
         self.config = self.load_config(config_path)
         self.logger = logger
@@ -38,15 +39,13 @@ class DoorListener( CardObserver ):
             import door.parallel as Door
             self.door_handler = Door.Door(self.config['parallel'], self.logger)
         elif (self.config['serial']['use']):
-            import door.serial as  Door
+            import door.ser as Door
             self.door_handler = Door.Door(self.config['serial'], self.logger)
         elif (self.config['raspberry']['use']):
-            print 'importing raspberry'
             import door.raspberry as Door
-            print 'imported'
             self.door_handler = Door.Door(self.config['raspberry'], self.logger)
         else:
-            logger.error("cannot recognize configuration")
+            self.logger.error("cannot recognize configuration")
             sys.exit()
         
 
@@ -59,15 +58,15 @@ class DoorListener( CardObserver ):
         """
         
         if len(addedcards) > 0:
-        
+            
             lector = self.read_card(readers())
-
+            
             dni = lector[0]
             name = lector[1]
-
+            
             self.logger.info(name + " has inserted the DNI " + dni)
-    
-            if(len(dni) != 0 and self.auth.search(dni)):
+            
+            if self.auth.search(dni):
                 self.door_handler.open_door()
                 self.logger.info("Access granted")
             else:

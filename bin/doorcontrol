@@ -40,11 +40,11 @@ def main():
     try:
         cardmonitor = CardMonitor()
 
-        # The ldap connector
-        ldap = LdapConnector.LdapConnector(config_path, logger)
+        # The auth connector
+        auth = AuthConnector.AuthConnector(config_path, logger)
         
         # The door listener
-        cardobserver = DoorListener.DoorListener(ldap, config_path, logger)
+        cardobserver = DoorListener.DoorListener(auth, config_path, logger)
         
         # Adds the observers
         cardmonitor.addObserver(cardobserver)
