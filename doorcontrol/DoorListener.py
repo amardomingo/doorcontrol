@@ -11,7 +11,6 @@ import string
 import time
 import logging
 import yaml
-import re
 
 import AuthConnector
 
@@ -19,6 +18,12 @@ from smartcard.System import readers
 from smartcard.util import toHexString
 from smartcard.util import toASCIIString
 from smartcard.CardMonitoring import CardMonitor, CardObserver
+
+# flag that always appears before the dnie
+DNI_SEPARATOR = "55 04 05 13"
+
+# flag that always appears before the name
+NAME_SEPARATOR = "55 04 03 0C"
 
 class DoorListener( CardObserver ):
 
@@ -58,8 +63,8 @@ class DoorListener( CardObserver ):
         """
         
         if len(addedcards) > 0:
-            
-            lector = self.read_card(readers())
+
+            lector = self.read_card(addedcards[0])
             
             dni = lector[0]
             name = lector[1]
@@ -79,7 +84,7 @@ class DoorListener( CardObserver ):
         return yaml.load(file(config_file_path, 'r'))
     
     
-    def read_card(self, reader):
+    def read_card(self, card):
         """
         Read the data from the reader given as a parameters
         It actually takes an array of readers, but only access the first one
@@ -89,9 +94,9 @@ class DoorListener( CardObserver ):
         # r=readers()
         # print r
         
-        if len(reader) > 0: 
+        if card is not None: 
         
-            connection = reader[0].createConnection()
+            connection = card.createConnection()
             connection.connect()
     
             # I'm not really sure how this works, legacy
@@ -108,33 +113,53 @@ class DoorListener( CardObserver ):
             data, sw1, sw2 = connection.transmit( SELECT )
             #print "%x %x" % (sw1, sw2)
             
-            # In 'data' there are a lot of characters and random crap.
-            # I use regexp to get the relevant pieces.
+            # In 'data' there are a lot of data and "flags" or fixed values.
+            # I'll use those flags to select the dni and the name
             
-            ascii_data = toASCIIString(data)
-    
-            dni_regexp = re.search('(\d{8})[A-Z]', ascii_data)
-            #TODO: make sure there actually are results
-            dni = dni_regexp.group(1)
-    
-            # So, this is a little hellish. The names can be single or compound,
-            # one or two surnames, again single or complex...
-            # i.e:
-            # John Doe Dui
-            # Jane Maria Doe Dui
-            # Johnny Doe Dui-Dao <-- Luckyly, the '-' is stored as a blank in the dni-e
-            # Jenny Dolores Doe del Dui
-            #
+            # So, first, i'll convert the data to its hex values:
+            hex_data = toHexString(data)
             
-            name_regexp = re.search('\w*\s?\w*\s?\w*\s?\w+\s\w+,\s\w+\s\w*\s?\(AUTENTICACIÓN\)', ascii_data)
+            # For the dni, I get the data AFTER the flag,
+            # and delete the first empty char:
+            dnie_data = hex_data.split(DNI_SEPARATOR)[1].split(" ")[1:]
             
-            # The name would look like:
-            # DOE EOD, JOHN (AUTENTICACIÓN)
+            # So, here, the first value is the dnie length, and then comes the dni
+            dnie = dnie_data[1:(int(dnie_data[0], 16))]
             
-            name_raw = name_regexp.group().replace(" (AUTENTICACIÓN)", "")
-            name_array = name_raw.split(", ")
-            name = "%s %s" % (name_array[1], name_array[0])
-    
+            # If I were to get the letter:
+            #dnie = dnie_data[1:(int(dnie_data[0], 16)+1)]
+            
+            # Note: int(val, 16) interprets the char as base 16 (i.e, as hexadecimal)
+            # instead of as a decimal value (base 10)
+            
+            # Finally, I convert the values to ascii
+            dni = "".join([chr(int(num, 16)) for num in dnie])
+            
+            
+            # Now, for the name, is pretty much the same, just with a different flag
+            name_data = hex_data.split(NAME_SEPARATOR)[1].split(" ")[1:]
+
+            # The hex values for the name
+            name_values = name_data[1:(int(name_data[0], 16)+0x01)]
+            # Remeber, the first value in name_data is the length, so
+            # I don't select it!
+            
+            # Convert the values to ascii
+            name_list =  [chr(int(c, 16)) for c in name_values]
+            
+            # So, now, in name_unordered I have something like 
+            # SURNAME1 SURNAME2, NAME (AUTENTICACIÓN)
+            # So I'll process it a little bit to get it in the format
+            # NAME SURNAME1 SURNAME2
+            name_unordered =  "".join(name_list).replace("(AUTENTICACIÓN)", "")
+            
+            # Another option would have been reduce the length by 34 in name_values
+            # to get rid of the "(AUTENTICACIÓN)" part, but I don't really like
+            # magic numbers. So I use a magic string instead ;-P
+            
+            # Finally, the sorted name
+            name = name_unordered.split(", ")[1] + name_unordered.split(", ")[0]
+
             return dni, name
     
         else:
