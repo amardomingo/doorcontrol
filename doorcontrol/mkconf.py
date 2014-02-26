@@ -19,6 +19,8 @@ ldap:\n\n\
     # User and pass for the ldap\n\
     user: cn=admin,dc=example,dc=org\n\
     password: pass\n\n\
+    # Custom filter\n
+    #filter: \"!(objectclass=shadowaccount)\"\n\n
     # The ldap Version\n\
     version: 3\n\n\
 # Config for the file\n\

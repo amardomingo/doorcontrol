@@ -59,7 +59,13 @@ class AuthConnector:
             result_set = []
             l.simple_bind(self.config['user'],self.config['password'])
             for filt in  self.config['dni_name'].split(', '):
-                ldap_result_id = l.search(self.config['baseDN'], ldap.SCOPE_SUBTREE, filt + '=' + dni, None)
+		# Custom filter? 
+                filter = ''
+                if 'filter' in self.config:
+                   filter = "(&(" + self.config['filter'] + ")(" + filt + "=" + dni + "))"
+                else:
+                   filter = "(" + filt + "=" + dni + ")"
+                ldap_result_id = l.search(self.config['baseDN'], ldap.SCOPE_SUBTREE, filter, None)
             
                 result_type, result_data = l.result(ldap_result_id, 0)
                 #print result_type
